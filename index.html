@@ -1,0 +1,1277 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <meta name="theme-color" content="#16a34a" id="themeColorMeta">
+    <meta name="description" content="LearnMate is a focused study platform for learning, practice, progress tracking and AI tutoring.">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <link rel="manifest" href="manifest.json">
+    <link rel="apple-touch-icon" href="icons/icon-192.png">
+
+    <title>LearnMate</title>
+
+    <link rel="stylesheet" href="styles.css">
+</head>
+
+<body>
+
+    <a class="skip-link" href="#main-content">Skip to main content</a>
+
+    <!-- LOADER -->
+    <div id="loader" class="loader">
+        <div class="loader-box">
+            <div class="loader-spinner"></div>
+            <h2>LearnMate</h2>
+            <p>Learn Smarter. Go Further.</p>
+        </div>
+    </div>
+
+    <!-- PAGE TRANSITION -->
+    <div id="pageTransition" class="page-transition"></div>
+
+    <!-- HEADER / MOBILE-FRIENDLY APP SHELL -->
+    <header class="site-header">
+
+        <div class="header-left">
+            <button
+                id="menuToggleButton"
+                class="menu-toggle-button"
+                type="button"
+                aria-label="Open LearnMate menu"
+                aria-controls="sideMenu"
+                aria-expanded="false"
+                onclick="toggleSideMenu()"
+            >
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+
+            <div class="logo" onclick="showView('home-view'); closeSideMenu()">
+                <span>Learn</span>Mate
+            </div>
+        </div>
+
+    </header>
+
+    <div id="menuOverlay" class="menu-overlay" onclick="closeSideMenu()" aria-hidden="true"></div>
+
+    <aside id="sideMenu" class="side-menu" aria-hidden="true" aria-label="LearnMate navigation">
+        <div class="side-menu-header">
+            <div>
+                <span class="side-menu-eyebrow">LEARNMATE</span>
+                <h2>Menu</h2>
+            </div>
+            <button
+                id="menuCloseButton"
+                class="menu-close-button"
+                type="button"
+                aria-label="Close LearnMate menu"
+                onclick="closeSideMenu()"
+            >×</button>
+        </div>
+
+        <div class="side-menu-search-hint">
+            <span>⌕</span>
+            <span>Search and explore LearnMate</span>
+            <kbd>Ctrl K</kbd>
+        </div>
+
+        <div id="connectionStatus" class="connection-status" role="status" aria-live="polite">
+            <span class="connection-dot" aria-hidden="true"></span>
+            <span id="connectionStatusText">Checking connection…</span>
+        </div>
+
+        <nav class="side-menu-nav" aria-label="Main navigation">
+            <button class="side-menu-item" onclick="showView('home-view'); closeSideMenu()"><span class="menu-icon">⌂</span><span>Home</span></button>
+            <button class="side-menu-item" onclick="showView('subjects-view'); closeSideMenu()"><span class="menu-icon">▦</span><span>Subjects</span></button>
+            <button class="side-menu-item" onclick="openGlobalSearch(); closeSideMenu()"><span class="menu-icon">⌕</span><span>Search</span></button>
+            <button class="side-menu-item" onclick="showView('practice-setup-view'); closeSideMenu()"><span class="menu-icon">✓</span><span>Practice</span></button>
+            <button id="calculatorNavButton" class="side-menu-item" onclick="openCalculator(); closeSideMenu()"><span class="menu-icon">⌗</span><span>Calculator</span></button>
+            <button class="side-menu-item" onclick="showView('solver-view'); closeSideMenu()"><span class="menu-icon">√</span><span>Math Solver</span></button>
+            <button class="side-menu-item" onclick="showView('ai-view'); closeSideMenu()"><span class="menu-icon">✦</span><span>AI Tutor</span></button>
+            <button class="side-menu-item" onclick="showView('progress-view'); renderProgress(); closeSideMenu()"><span class="menu-icon">◔</span><span>Progress</span></button>
+            <button class="side-menu-item" onclick="showView('bookmarks-view'); renderBookmarks(); closeSideMenu()"><span class="menu-icon">★</span><span>Bookmarks</span></button>
+            <button class="side-menu-item" onclick="showView('notifications-view'); renderNotifications(); renderReminders(); closeSideMenu()"><span class="menu-icon">♢</span><span>Notifications <span id="notificationBadge" class="notification-badge menu-badge" hidden>0</span></span></button>
+            <button class="side-menu-item" onclick="showView('profile-view'); renderStudentProfile(); closeSideMenu()"><span class="menu-icon">●</span><span>Profile</span></button>
+            <button class="side-menu-item" onclick="showView('settings-view'); renderSettings(); closeSideMenu()"><span class="menu-icon">⚙</span><span>Settings</span></button>
+        </nav>
+
+        <div class="side-menu-divider"></div>
+
+        <div class="side-menu-section-label">COMING SOON</div>
+        <nav class="side-menu-nav side-menu-future" aria-label="Future LearnMate features">
+            <button class="side-menu-item future-item" onclick="showComingSoon('Admin Dashboard'); closeSideMenu()"><span class="menu-icon">▣</span><span>Admin Dashboard</span><span class="coming-soon-label">Soon</span></button>
+            <button class="side-menu-item future-item" onclick="showComingSoon('Achievements'); closeSideMenu()"><span class="menu-icon">◆</span><span>Achievements</span><span class="coming-soon-label">Soon</span></button>
+            <button class="side-menu-item future-item" onclick="showComingSoon('Account & Security'); closeSideMenu()"><span class="menu-icon">◈</span><span>Account & Security</span><span class="coming-soon-label">Soon</span></button>
+        </nav>
+
+        <div class="side-menu-footer">
+            <strong>LearnMate</strong>
+            <span>Learn Smarter. Go Further.</span>
+            <span class="no-ads-badge">No ads. Just learning.</span>
+        </div>
+    </aside>
+
+
+    <main id="main-content" tabindex="-1">
+
+        <!-- ================= NOTIFICATIONS & STUDY REMINDERS ================= -->
+
+        <section id="notifications-view" class="view">
+
+            <div class="page-heading notifications-heading">
+                <span>STAY ON TRACK</span>
+                <h1>Notifications & Study Reminders</h1>
+                <p>Set study reminders and keep up with important LearnMate activity.</p>
+            </div>
+
+            <div class="notifications-layout">
+
+                <div class="notification-panel">
+                    <div class="notification-panel-heading">
+                        <div>
+                            <span>YOUR NOTIFICATIONS</span>
+                            <h2>Notifications</h2>
+                        </div>
+                        <button id="markNotificationsReadButton" class="btn btn-green">Mark All Read</button>
+                    </div>
+
+                    <div id="notificationsContainer" class="notifications-container"></div>
+                </div>
+
+                <div class="reminder-panel">
+                    <div class="notification-panel-heading">
+                        <div>
+                            <span>PLAN YOUR STUDY</span>
+                            <h2>Study Reminders</h2>
+                        </div>
+                    </div>
+
+                    <form id="reminderForm" class="reminder-form">
+                        <label>
+                            Reminder title
+                            <input id="reminderTitle" type="text" maxlength="80" placeholder="e.g. Revise Chemistry" required>
+                        </label>
+
+                        <div class="reminder-form-grid">
+                            <label>
+                                Date
+                                <input id="reminderDate" type="date" required>
+                            </label>
+                            <label>
+                                Time
+                                <div class="reminder-time-picker">
+                                    <input id="reminderHour" type="number" min="1" max="12" value="6" inputmode="numeric" aria-label="Hour" required>
+                                    <span>:</span>
+                                    <input id="reminderMinute" type="number" min="0" max="59" value="00" inputmode="numeric" aria-label="Minute" required>
+                                    <select id="reminderAmPm" aria-label="AM or PM" required>
+                                        <option value="AM">AM</option>
+                                        <option value="PM" selected>PM</option>
+                                    </select>
+                                </div>
+                            </label>
+                        </div>
+
+                        <label>
+                            Repeat
+                            <select id="reminderRepeat">
+                                <option value="none">Does not repeat</option>
+                                <option value="daily">Every day</option>
+                                <option value="weekly">Every week</option>
+                            </select>
+                        </label>
+
+                        <button type="submit" class="btn btn-orange">Add Study Reminder</button>
+                    </form>
+
+                    <div class="reminder-list-heading">
+                        <h3>Your Reminders</h3>
+                        <span id="reminderCount"></span>
+                    </div>
+
+                    <div id="remindersContainer" class="reminders-container"></div>
+                </div>
+
+            </div>
+
+            <div class="notification-note">
+                <strong>Frontend reminder system:</strong> reminders are stored on this browser for now.
+                Later, the LearnMate backend can connect them to accounts and real device notifications.
+            </div>
+
+        </section>
+
+
+        <!-- ================= STUDENT PROFILE ================= -->
+
+        <section id="profile-view" class="view">
+
+            <div class="page-heading profile-heading">
+                <span>YOUR LEARNMATE IDENTITY</span>
+                <h1>Student Profile</h1>
+                <p>Personalize your learning space and keep your study information together.</p>
+            </div>
+
+            <div class="profile-layout">
+
+                <div class="profile-card profile-overview-card">
+                    <div id="profileAvatar" class="profile-avatar">LM</div>
+                    <h2 id="profileDisplayName">LearnMate Student</h2>
+                    <p id="profileHeadline">Your learning profile</p>
+
+                    <div class="profile-mini-stats">
+                        <div><strong id="profileTestsCount">0</strong><span>Tests</span></div>
+                        <div><strong id="profileQuestionsCount">0</strong><span>Questions</span></div>
+                        <div><strong id="profileStreakCount">0</strong><span>Day Streak</span></div>
+                    </div>
+
+                    <div class="profile-member-note">
+                        <span>Member since</span>
+                        <strong id="profileMemberSince">Today</strong>
+                    </div>
+                </div>
+
+                <div class="profile-card profile-form-card">
+                    <div class="profile-section-heading">
+                        <span>PROFILE INFORMATION</span>
+                        <h2>About You</h2>
+                    </div>
+
+                    <form id="studentProfileForm" class="student-profile-form">
+                        <div class="profile-form-grid">
+                            <label>
+                                First name
+                                <input id="profileFirstName" type="text" maxlength="40" required>
+                            </label>
+
+                            <label>
+                                Last name
+                                <input id="profileLastName" type="text" maxlength="40" required>
+                            </label>
+                        </div>
+
+                        <div class="profile-form-grid">
+                            <label>
+                                Learning level
+                                <select id="profileLevel">
+                                    <option value="Secondary School">Secondary School</option>
+                                    <option value="Sixth Form / College">Sixth Form / College</option>
+                                    <option value="University">University</option>
+                                    <option value="Independent Learner">Independent Learner</option>
+                                </select>
+                            </label>
+
+                            <label>
+                                School / Institution
+                                <input id="profileSchool" type="text" maxlength="100" placeholder="Optional">
+                            </label>
+                        </div>
+
+                        <label>
+                            Favourite subject
+                            <select id="profileFavoriteSubject"></select>
+                        </label>
+
+                        <label>
+                            Short bio
+                            <textarea id="profileBio" maxlength="240" rows="4" placeholder="Tell LearnMate a little about your learning goals..."></textarea>
+                        </label>
+
+                        <div class="profile-form-actions">
+                            <button type="submit" class="btn btn-green">Save Profile</button>
+                            <button type="button" id="clearStudentProfileButton" class="btn btn-red">Clear Profile</button>
+                            <span id="profileSavedMessage" class="profile-saved-message"></span>
+                        </div>
+                    </form>
+                </div>
+
+            </div>
+
+            <div class="profile-note">
+                <strong>Frontend profile:</strong> your profile is currently stored on this browser.
+                When LearnMate gets its backend and login system, this profile can be connected to your account and synced across devices.
+            </div>
+
+        </section>
+
+
+        <!-- ================= SAVED QUESTIONS ================= -->
+
+        <!-- ================= SETTINGS ================= -->
+
+        <section id="settings-view" class="view">
+            <div class="page-heading settings-heading">
+                <span>PERSONALIZE LEARNMATE</span>
+                <h1>Settings</h1>
+                <p>Control your LearnMate appearance, study preferences and local data.</p>
+            </div>
+
+            <div class="settings-layout">
+                <div class="settings-card">
+                    <div class="settings-card-heading"><span>APPEARANCE</span><h2>How LearnMate looks</h2></div>
+                    <label class="settings-option">
+                        <span><strong>Dark mode</strong><small>Use a darker interface when studying in low light.</small></span>
+                        <input type="checkbox" id="darkModeSetting" class="settings-toggle">
+                    </label>
+                </div>
+
+                <div class="settings-card pwa-install-card">
+                    <div class="settings-card-heading"><span>APP</span><h2>Use LearnMate like an app</h2></div>
+                    <p class="settings-data-note">Install LearnMate on your phone or computer for a dedicated app-style experience. Your current local study data stays on this browser.</p>
+                    <button class="btn btn-green" id="installAppButton" hidden>📲 Install LearnMate</button>
+                    <p id="installAppMessage" class="settings-saved-message" aria-live="polite"></p>
+                </div>
+
+                <div class="settings-card">
+                    <div class="settings-card-heading"><span>NOTIFICATIONS</span><h2>Stay informed</h2></div>
+                    <label class="settings-option">
+                        <span><strong>Enable notifications</strong><small>Allow LearnMate to create activity and study-reminder notifications.</small></span>
+                        <input type="checkbox" id="notificationsSetting" class="settings-toggle">
+                    </label>
+                </div>
+
+                <div class="settings-card">
+                    <div class="settings-card-heading"><span>STUDY PREFERENCES</span><h2>Your defaults</h2></div>
+                    <div class="settings-form-grid">
+                        <label><span>Default learning level</span>
+                            <select id="defaultLevelSetting">
+                                <option value="Secondary School">Secondary School</option>
+                                <option value="Sixth Form / College">Sixth Form / College</option>
+                                <option value="University">University</option>
+                                <option value="Independent Learner">Independent Learner</option>
+                            </select>
+                        </label>
+                        <label><span>Default subject</span><select id="defaultSubjectSetting"></select></label>
+                        <label><span>Question difficulty</span>
+                            <select id="questionDifficultySetting">
+                                <option value="balanced">Balanced</option>
+                                <option value="challenging">Challenging</option>
+                                <option value="advanced">Advanced</option>
+                            </select>
+                        </label>
+                    </div>
+                </div>
+
+                <div class="settings-card settings-danger-card">
+                    <div class="settings-card-heading"><span>DATA CONTROLS</span><h2>Manage local LearnMate data</h2></div>
+                    <p class="settings-data-note">These controls affect data stored in this browser. They do not affect your files or future server account data.</p>
+                    <div class="settings-data-actions">
+                        <button class="btn btn-orange" id="clearBookmarksSetting">Clear Bookmarks</button>
+                        <button class="btn btn-orange" id="clearNotificationsSetting">Clear Notifications</button>
+                        <button class="btn btn-orange" id="clearRemindersSetting">Clear Reminders</button>
+                        <button class="btn btn-red" id="clearProgressSetting">Clear Practice History</button>
+                        <button class="btn btn-red" id="clearAllDataSetting">Clear All LearnMate Data</button>
+                    </div>
+                    <p id="settingsSavedMessage" class="settings-saved-message" aria-live="polite"></p>
+                </div>
+
+                <div class="settings-actions-row">
+                    <button class="btn btn-green" id="saveSettingsButton">Save Settings</button>
+                    <button class="btn btn-orange" onclick="showView('home-view')">Back to Home</button>
+                </div>
+            </div>
+        </section>
+
+        <section id="bookmarks-view" class="view">
+
+            <div class="page-heading bookmarks-heading">
+
+                <span>YOUR SAVED QUESTIONS</span>
+
+                <h1>Bookmarks & Saved Questions</h1>
+
+                <p>Save difficult questions now and return to them later for revision.</p>
+
+            </div>
+
+            <div class="bookmarks-toolbar">
+
+                <input
+                    id="bookmarkSearch"
+                    type="search"
+                    placeholder="Search saved questions..."
+                    autocomplete="off"
+                >
+
+                <select id="bookmarkSubjectFilter">
+                    <option value="all">All Subjects</option>
+                </select>
+
+                <button
+                    id="clearBookmarksButton"
+                    class="btn btn-red">
+                    Clear All
+                </button>
+
+            </div>
+
+            <div id="bookmarksCount" class="bookmarks-count"></div>
+
+            <div id="bookmarksContainer" class="bookmarks-container"></div>
+
+        </section>
+
+
+        <!-- ================= PROGRESS ================= -->
+
+        <section id="progress-view" class="view">
+
+            <div class="section-heading progress-page-heading">
+                <span>YOUR LEARNING JOURNEY</span>
+                <h2>My Progress</h2>
+                <p>Track your practice, study streaks, goals and achievements.</p>
+            </div>
+
+            <div id="progressContent"></div>
+
+        </section>
+
+
+        <!-- ================= GLOBAL SEARCH ================= -->
+
+        <section id="global-search-view" class="view">
+
+            <div class="page-heading global-search-heading">
+                <span>FIND IT FAST</span>
+                <h1>Global LearnMate Search</h1>
+                <p>Search subjects, saved questions and your practice history from one place.</p>
+            </div>
+
+            <div class="global-search-panel">
+                <div class="global-search-input-wrap">
+                    <span class="global-search-icon" aria-hidden="true">🔎</span>
+                    <input
+                        id="globalSearchInput"
+                        type="search"
+                        placeholder="Search LearnMate..."
+                        autocomplete="off"
+                        aria-label="Search LearnMate"
+                    >
+                    <button id="clearGlobalSearchButton" class="btn btn-secondary" type="button">Clear</button>
+                </div>
+                <p class="global-search-hint">Try <strong>quadratic equations</strong>, <strong>photosynthesis</strong>, <strong>English Language</strong>, or a word from a saved question.</p>
+            </div>
+
+            <div id="globalSearchSummary" class="global-search-summary"></div>
+            <div id="globalSearchResults" class="global-search-results"></div>
+
+        </section>
+
+
+        <!-- ================= HOME ================= -->
+
+        <section id="home-view" class="view active">
+
+            <div class="hero">
+
+                <div class="hero-content">
+
+                    <span class="hero-badge">SMARTER LEARNING</span>
+
+                    <h1>
+                        Learn Smarter.<br>
+                        <span>Go Further.</span>
+                    </h1>
+
+                    <p>
+                        LearnMate is your personal learning platform for
+                        studying, practicing, solving problems and learning
+                        with AI.
+                    </p>
+
+                    <div class="hero-buttons">
+
+                        <button
+                            class="btn btn-green"
+                            onclick="showView('subjects-view')">
+                            Explore Subjects
+                        </button>
+
+                        <button
+                            class="btn btn-orange"
+                            onclick="showView('ai-view')">
+                            Ask AI Tutor
+                        </button>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- FEATURES -->
+
+            <div class="section">
+
+                <div class="section-heading">
+                    <span>WHAT LEARNMATE OFFERS</span>
+                    <h2>Everything You Need To Learn Better</h2>
+                </div>
+
+                <div class="feature-grid">
+
+                    <div class="feature-card">
+                        <div class="feature-icon">📝</div>
+                        <h3>Practice Tests</h3>
+                        <p>
+                            Test your understanding with challenging
+                            practice questions.
+                        </p>
+                    </div>
+
+                    <div class="feature-card">
+                        <div class="feature-icon">🧮</div>
+                        <h3>Math Solver</h3>
+                        <p>
+                            Solve mathematical problems and see the steps.
+                        </p>
+                    </div>
+
+                    <div class="feature-card">
+                        <div class="feature-icon">🤖</div>
+                        <h3>AI Tutor</h3>
+                        <p>
+                            Ask questions and receive explanations while
+                            learning.
+                        </p>
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- SUBJECT PREVIEW -->
+
+            <div class="section">
+
+                <div class="section-heading">
+                    <span>SUBJECTS</span>
+                    <h2>Start Learning</h2>
+                </div>
+
+                <div id="homeSubjects" class="subject-grid"></div>
+
+                <div class="center-button">
+
+                    <button
+                        class="btn btn-green"
+                        onclick="showView('subjects-view')">
+                        View All Subjects
+                    </button>
+
+                </div>
+
+            </div>
+
+
+            <!-- CTA -->
+
+            <div class="cta-section">
+
+                <h2>Ready to learn?</h2>
+
+                <p>
+                    Choose a subject, practice your skills or ask the
+                    AI Tutor.
+                </p>
+
+                <button
+                    class="btn btn-orange"
+                    onclick="showView('ai-view')">
+                    Start Learning
+                </button>
+
+            </div>
+
+        </section>
+
+
+        <!-- ================= SUBJECTS ================= -->
+
+        <section id="subjects-view" class="view">
+
+            <div class="page-heading">
+
+                <span>LEARNMATE SUBJECTS</span>
+
+                <h1>Choose a Subject</h1>
+
+                <p>
+                    Browse your subjects and enter a learning workspace.
+                </p>
+
+            </div>
+
+
+            <div class="search-box">
+
+                <input
+                    type="text"
+                    id="subjectSearch"
+                    placeholder="Search subjects..."
+                >
+
+            </div>
+
+
+            <div id="subjectsGrid" class="subject-grid"></div>
+
+
+            <div class="center-button">
+
+                <button
+                    id="toggleSubjectsButton"
+                    class="btn btn-orange">
+                    View All Subjects
+                </button>
+
+            </div>
+
+        </section>
+
+
+        <!-- ================= WORKSPACE ================= -->
+
+        <section id="workspace-view" class="view">
+
+            <div class="subject-hero-panel">
+                <div class="subject-hero-main">
+                    <div class="subject-hero-icon" id="workspaceSubjectIcon">📚</div>
+                    <div>
+                        <span id="workspaceSubjectLabel">SUBJECT</span>
+                        <h1 id="workspaceTitle">Subject Workspace</h1>
+                        <p id="workspaceDescription"></p>
+                    </div>
+                </div>
+                <div class="subject-hero-actions">
+                    <button class="btn btn-orange" id="workspacePracticeButton">Practice</button>
+                    <button class="btn btn-purple" id="workspaceTutorButton">Ask AI Tutor</button>
+                </div>
+            </div>
+
+            <div id="subjectWorkspaceContent" class="subject-workspace-content"></div>
+
+            <div class="center-button">
+                <button class="btn btn-red" onclick="showView('subjects-view')">Back to Subjects</button>
+            </div>
+
+        </section>
+
+
+        <!-- ================= PRACTICE SETUP ================= -->
+
+        <section id="practice-setup-view" class="view">
+
+            <div class="page-heading">
+
+                <span>PRACTICE</span>
+
+                <h1>Practice Test</h1>
+
+                <p>
+                    Choose a subject and test your knowledge.
+                </p>
+
+            </div>
+
+
+            <div class="practice-setup-card">
+
+                <label for="practiceSubject">
+                    Select Subject
+                </label>
+
+                <select id="practiceSubject"></select>
+
+
+                <label for="questionCount">
+                    Number of Questions <span class="form-hint">(maximum 100)</span>
+                </label>
+
+                <input
+                    id="questionCount"
+                    type="number"
+                    min="1"
+                    max="100"
+                    value="10"
+                    inputmode="numeric"
+                    placeholder="Enter 1–100"
+                >
+
+                <label for="practiceTime">
+                    Time Allowed <span class="form-hint">(maximum 2 hours)</span>
+                </label>
+
+                <select id="practiceTime">
+                    <option value="5">5 minutes</option>
+                    <option value="10">10 minutes</option>
+                    <option value="15">15 minutes</option>
+                    <option value="20">20 minutes</option>
+                    <option value="30" selected>30 minutes</option>
+                    <option value="45">45 minutes</option>
+                    <option value="60">1 hour</option>
+                    <option value="90">1 hour 30 minutes</option>
+                    <option value="120">2 hours</option>
+                </select>
+
+                <p class="practice-limit-note">
+                    You can choose any number from 1 to 100 questions and up to 120 minutes.
+                </p>
+
+
+                <button
+                    id="startPracticeButton"
+                    class="btn btn-green">
+                    Start Practice
+                </button>
+
+            </div>
+
+        </section>
+
+
+        <!-- ================= TEST ================= -->
+
+        <section id="test-view" class="view">
+
+            <div class="test-header">
+
+                <div>
+
+                    <span id="testSubjectLabel"></span>
+
+                    <h1 id="testTitle">
+                        Practice Test
+                    </h1>
+
+                </div>
+
+
+                <div class="timer-box">
+
+                    <span>TIME</span>
+
+                    <strong id="timer">
+                        20:00
+                    </strong>
+
+                </div>
+
+            </div>
+
+
+            <div class="test-tools">
+
+                <button
+                    id="testCalculatorButton"
+                    class="btn btn-orange">
+                    🧮 Calculator
+                </button>
+
+                <button
+                    id="skipQuestionButton"
+                    class="btn btn-red">
+                    Skip Question
+                </button>
+
+            </div>
+
+
+            <div
+                id="practiceStatus"
+                class="practice-status">
+            </div>
+
+            <div
+                id="skippedStatus"
+                class="skipped-status">
+            </div>
+
+
+            <div class="question-card">
+
+                <div class="question-card-top">
+                    <div class="question-header-info">
+                        <div class="question-number">
+                            Question <span id="questionNumber"></span>
+                        </div>
+                        <div id="currentAnswerState" class="current-answer-state unanswered" aria-live="polite">
+                            ○ Not answered
+                        </div>
+                    </div>
+
+                    <button
+                        id="bookmarkQuestionButton"
+                        class="bookmark-question-button"
+                        type="button">
+                        ☆ Save Question
+                    </button>
+                </div>
+
+                <h2 id="questionText"></h2>
+
+                <div
+                    id="answerOptions"
+                    class="answer-options">
+                </div>
+
+            </div>
+
+
+            <div class="test-navigation">
+
+                <button
+                    id="previousQuestionButton"
+                    class="btn btn-orange">
+                    Previous
+                </button>
+
+                <button
+                    id="nextQuestionButton"
+                    class="btn btn-green">
+                    Next
+                </button>
+
+            </div>
+
+
+            <div class="submit-area">
+
+                <button
+                    id="submitTestButton"
+                    class="btn btn-red">
+                    Submit Test
+                </button>
+
+            </div>
+
+        </section>
+
+
+        <!-- ================= RESULTS ================= -->
+
+        <section id="results-view" class="view">
+
+            <div class="results-card">
+
+                <span>TEST COMPLETE</span>
+
+                <h1>Your Result</h1>
+
+                <div
+                    id="scoreDisplay"
+                    class="score-display">
+                </div>
+
+                <p id="resultMessage"></p>
+
+
+                <div class="result-actions">
+
+                    <button
+                        id="reviewTestButton"
+                        class="btn btn-green">
+                        Review Test
+                    </button>
+
+                    <button
+                        id="redoTestButton"
+                        class="btn btn-orange">
+                        Redo Test
+                    </button>
+
+                    <button
+                        id="newTestButton"
+                        class="btn btn-red">
+                        New Test
+                    </button>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- ================= REVIEW ================= -->
+
+        <section id="review-view" class="view">
+
+            <div class="page-heading">
+
+                <span>REVIEW</span>
+
+                <h1>Review Your Test</h1>
+
+                <p>
+                    See your answers and the correct answers.
+                </p>
+
+            </div>
+
+
+            <div id="reviewContainer"></div>
+
+
+            <div class="center-button">
+
+                <button
+                    class="btn btn-green"
+                    onclick="showView('results-view')">
+                    Back to Results
+                </button>
+
+            </div>
+
+        </section>
+
+
+        <!-- ================= CALCULATOR ================= -->
+
+        <section id="calculator-view" class="view">
+
+            <div class="page-heading">
+
+                <span>CALCULATOR</span>
+
+                <h1>LearnMate Calculator</h1>
+
+                <p>
+                    Perform arithmetic, powers, roots, percentages and
+                    scientific calculations.
+                </p>
+
+            </div>
+
+
+            <div class="calculator-container">
+
+                <input
+                    id="calculatorDisplay"
+                    class="calculator-display"
+                    type="text"
+                    placeholder="0"
+                    autocomplete="off"
+                >
+
+
+                <!-- COMMON SYMBOLS -->
+
+                <div class="symbol-title">
+                    Mathematical Symbols
+                </div>
+
+                <div
+                    id="calculatorSymbols"
+                    class="symbol-keyboard">
+
+                    <button data-symbol="√(">√</button>
+                    <button data-symbol="∛(">∛</button>
+                    <button data-symbol="π">π</button>
+                    <button data-symbol="e">e</button>
+
+                    <button data-symbol="^">^</button>
+                    <button data-symbol="²">²</button>
+                    <button data-symbol="³">³</button>
+                    <button data-symbol="ⁿ">ⁿ</button>
+
+                    <button data-symbol="×">×</button>
+                    <button data-symbol="÷">÷</button>
+                    <button data-symbol="±">±</button>
+                    <button data-symbol="%">%</button>
+
+                    <button data-symbol="≤">≤</button>
+                    <button data-symbol="≥">≥</button>
+                    <button data-symbol="≠">≠</button>
+                    <button data-symbol="≈">≈</button>
+
+                    <button data-symbol="sin(">sin</button>
+                    <button data-symbol="cos(">cos</button>
+                    <button data-symbol="tan(">tan</button>
+                    <button data-symbol="log(">log</button>
+
+                    <button data-symbol="ln(">ln</button>
+                    <button data-symbol="abs(">abs</button>
+                    <button data-symbol="(">(</button>
+                    <button data-symbol=")">)</button>
+
+                </div>
+
+
+                <!-- CALCULATOR KEYS -->
+
+                <div class="calculator-grid">
+
+                    <button data-calc="clear" class="calc-red">
+                        AC
+                    </button>
+
+                    <button data-calc="backspace">
+                        ⌫
+                    </button>
+
+                    <button data-calc="(">
+                        (
+                    </button>
+
+                    <button data-calc=")">
+                        )
+                    </button>
+
+
+                    <button data-calc="7">7</button>
+                    <button data-calc="8">8</button>
+                    <button data-calc="9">9</button>
+                    <button data-calc="÷">÷</button>
+
+
+                    <button data-calc="4">4</button>
+                    <button data-calc="5">5</button>
+                    <button data-calc="6">6</button>
+                    <button data-calc="×">×</button>
+
+
+                    <button data-calc="1">1</button>
+                    <button data-calc="2">2</button>
+                    <button data-calc="3">3</button>
+                    <button data-calc="-">−</button>
+
+
+                    <button data-calc="0">0</button>
+                    <button data-calc=".">.</button>
+                    <button data-calc="%">%</button>
+                    <button data-calc="+">+</button>
+
+
+                    <button
+                        data-calc="="
+                        class="equals-key">
+                        =
+                    </button>
+
+                </div>
+
+            </div>
+
+
+            <div class="calculator-actions">
+
+                <button
+                    id="calculatorBackButton"
+                    class="btn btn-red">
+                    Back
+                </button>
+
+            </div>
+
+        </section>
+
+
+        <!-- ================= MATH SOLVER ================= -->
+
+        <section id="solver-view" class="view">
+
+            <div class="page-heading">
+
+                <span>MATHEMATICS</span>
+
+                <h1>Math Solver</h1>
+
+                <p>
+                    Enter a mathematical expression or equation and
+                    LearnMate will try to solve it step by step.
+                </p>
+
+            </div>
+
+
+            <div class="solver-container">
+
+                <textarea
+                    id="solverInput"
+                    placeholder="Examples:
+√4
+2² + 3²
+2^5
+3x + 5 = 17
+x² - 9 = 0
+sin(30)
+log(100)"
+                ></textarea>
+
+
+                <div class="symbol-title">
+                    Mathematical Symbols
+                </div>
+
+
+                <div
+                    id="solverSymbols"
+                    class="symbol-keyboard">
+
+                    <button data-solver-symbol="√(">√</button>
+                    <button data-solver-symbol="∛(">∛</button>
+                    <button data-solver-symbol="π">π</button>
+                    <button data-solver-symbol="∞">∞</button>
+
+                    <button data-solver-symbol="²">²</button>
+                    <button data-solver-symbol="³">³</button>
+                    <button data-solver-symbol="^">^</button>
+                    <button data-solver-symbol="±">±</button>
+
+                    <button data-solver-symbol="×">×</button>
+                    <button data-solver-symbol="÷">÷</button>
+                    <button data-solver-symbol="≤">≤</button>
+                    <button data-solver-symbol="≥">≥</button>
+
+                    <button data-solver-symbol="≠">≠</button>
+                    <button data-solver-symbol="≈">≈</button>
+                    <button data-solver-symbol="Δ">Δ</button>
+                    <button data-solver-symbol="θ">θ</button>
+
+                    <button data-solver-symbol="α">α</button>
+                    <button data-solver-symbol="β">β</button>
+                    <button data-solver-symbol="γ">γ</button>
+                    <button data-solver-symbol="Σ">Σ</button>
+
+                    <button data-solver-symbol="∫">∫</button>
+                    <button data-solver-symbol="∂">∂</button>
+                    <button data-solver-symbol="sin(">sin</button>
+                    <button data-solver-symbol="cos(">cos</button>
+
+                    <button data-solver-symbol="tan(">tan</button>
+                    <button data-solver-symbol="log(">log</button>
+                    <button data-solver-symbol="ln(">ln</button>
+                    <button data-solver-symbol="(">(</button>
+
+                    <button data-solver-symbol=")">)</button>
+
+                </div>
+
+
+                <button
+                    id="solveMathButton"
+                    class="btn btn-green">
+                    Solve Problem
+                </button>
+
+
+                <button
+                    id="clearSolverButton"
+                    class="btn btn-red">
+                    Clear
+                </button>
+
+
+                <div
+                    id="solverResult"
+                    class="solver-result">
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- ================= AI TUTOR ================= -->
+
+        <section id="ai-view" class="view">
+
+            <div class="page-heading">
+
+                <span>LEARNMATE AI</span>
+
+                <h1>AI Tutor</h1>
+
+                <p>
+                    Ask questions, request explanations, get examples
+                    and learn step by step.
+                </p>
+
+            </div>
+
+
+            <div class="ai-container">
+
+                <div
+                    id="aiMessages"
+                    class="ai-messages">
+
+                    <div class="ai-message assistant">
+
+                        <strong>LearnMate AI</strong>
+
+                        <p>
+                            Hello! Ask me anything you want to learn.
+                        </p>
+
+                    </div>
+
+                </div>
+
+
+                <div class="ai-input-area">
+
+                    <textarea
+                        id="aiInput"
+                        placeholder="Ask your AI Tutor a question..."
+                    ></textarea>
+
+                    <button
+                        id="sendAiButton"
+                        class="btn btn-green">
+                        Send
+                    </button>
+
+                </div>
+
+                <div class="ai-note">
+                    AI Tutor will be connected to the secure LearnMate
+                    backend next. AI tutoring will require an internet
+                    connection for now. Model attribution will always show
+                    the actual model used.
+                </div>
+
+            </div>
+
+        </section>
+
+    </main>
+
+
+    <!-- FOOTER -->
+
+    <footer>
+
+        <div class="logo">
+            <span>Learn</span>Mate
+        </div>
+
+        <p>
+            Learn Smarter. Go Further.
+        </p>
+
+        <p>
+            © 2026 LearnMate. All rights reserved.
+        </p>
+
+    </footer>
+
+
+    <script src="script.js"></script>
+    <script>
+        if ("serviceWorker" in navigator) {
+            window.addEventListener("load", () => {
+                navigator.serviceWorker.register("service-worker.js").catch(() => {});
+            });
+        }
+    </script>
+
+</body>
+</html>
